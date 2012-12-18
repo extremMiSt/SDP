@@ -55,7 +55,7 @@ public class Main2 {
 			}
 			if (lightValue[0] < schwarz) {
 				motorLeft.forward();
-				motorRight.stop();
+				motorRight.stop( );
 				// motorRight.backward();
 			} else {
 				motorRight.forward();
