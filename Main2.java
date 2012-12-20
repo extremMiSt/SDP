@@ -11,7 +11,7 @@ public class Main2 {
 
 	// ...........................SETTINGS...........................//
 	private static final int schwarz = 50;
-	private static int maxSpeed = 300;
+	private static int maxSpeed = 400;
 	private static int minSpeed = 0;
 
 	private static final NXTRegulatedMotor motorRight = Motor.A;

@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
@@ -27,7 +29,7 @@ public class Main3 {
 	private static final LightSensor lightLeft = new LightSensor(SensorPort.S4);
 	private static final LightSensor lightCenter = new LightSensor(SensorPort.S3);
 	
-	//private static Seeker seeker;
+	private static Seeker seeker;
 	// ...........................SETTINGS...........................//
 
 	// ...........................VARS...........................//
@@ -44,13 +46,13 @@ public class Main3 {
 	public static void main(String[] args) {
 		initLightSensors();
 		initMotors();
-		motorSpezialForward();
-		//motorSpezialBack();
+		//motorSpezialForward();
+		motorSpezialBack();
 		motorRight.setSpeed(maxSpeed);
 		motorLeft.setSpeed(maxSpeed);
 		motorRight.forward();
 		motorLeft.forward();
-		//seeker = new Seeker(lightCenter);
+		seeker = new Seeker(lightCenter);
 		while (Button.readButtons() == 0) {
 			int[] values = getLightValues();
 			if(status == ok){
@@ -132,38 +134,52 @@ public class Main3 {
 	}
 }
 
-//class Seeker extends Thread{
-//	
-//	public LightSensor light;
-//	
-//	public boolean v1, v2 = false;
-//	public long t1, t2 = 0;
-//	public boolean used = false;
-//	public int count = 1; 
-//	
-//	public Seeker(LightSensor spezial){
-//		super();
-//		light = spezial;
-//		this.start();
-//	}
-//	
-//	public void run(){
-//		while(true){
-//			if(light.getLightValue() > 50){
-//				save(false, System.currentTimeMillis());
-//			}else{
-//				save(true, System.currentTimeMillis());
-//			}
-//			if(!used && (!v1 && v2)){
+class Seeker extends Thread{
+	
+	public LightSensor light;
+	public int minZeit = 700;
+	public int maxZeit = 1000;
+	
+//	public boolean v1, v2, v3, v4, v5, v6, v7 = false;
+//	public long t1, t2, t3, t4, t5, t6, t7 = 0;
+	
+	LinkedList<Boolean> bools = new LinkedList<Boolean>();
+	LinkedList<Long> times = new LinkedList<Long>();
+	public boolean used = false;
+	public int count = 1; 
+	
+	public Seeker(LightSensor spezial){
+		super();
+		this.setDaemon(true);
+		light = spezial;
+		this.start();
+	}
+	
+	public void run(){
+		while(true){
+			if(light.getLightValue() > 50){
+				update(false, System.currentTimeMillis());
+			}else{
+				update(true, System.currentTimeMillis());
+			}
+//			if(!used && (!v1 && v2) && t1 - t2 < zeit){
 //				count++;
 //				if(count % 3 ==0){
 //					Sound.twoBeeps();
 //				}
 //				used = true;
 //			}
-//		}
-//	}
-//	
+			
+			if( bools.size() > 6
+					&& bools.get(0) && !bools.get(1) && bools.get(2) && !bools.get(3) && bools.get(4) && !bools.get(5) && bools.get(6) 
+					&& (times.get(0) - times.get(6) > minZeit)){
+				Sound.twoBeeps();
+				used = true;
+			}
+			System.out.println(bools.size());
+		}
+	}
+	
 //	private void save(boolean neu, long time){
 //		if(v2 != neu){
 //			v1 = v2;
@@ -173,4 +189,26 @@ public class Main3 {
 //			used = false;
 //		}
 //	}
-//}
+	
+	private void update(boolean neu, long time){
+		if(bools.isEmpty() || bools.get(0) != neu){
+			bools.add(0, neu);
+			times.add(0, time);
+			for (int i = bools.size()-1; i >=0; i--) {
+				if(times.get(i) < time - maxZeit){
+					times.remove(i);
+					bools.remove(i);
+				}
+			}
+			used = false;
+		}else{
+			times.set(0, time);
+			for (int i = bools.size()-1; i >=0; i--) {
+				if(times.get(i) < time - maxZeit){
+					times.remove(i);
+					bools.remove(i);
+				}
+			}
+		}
+	}
+}
