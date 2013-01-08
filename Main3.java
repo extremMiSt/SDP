@@ -14,6 +14,7 @@ public class Main3 {
 	public static int leftOnLine = 0;
 	public static int rightOnLine =1;
 	public static int ok = 2;
+	public static int tower = 3;
 
 	// ...........................SETTINGS...........................//
 	private static final int schwarz = 50;
@@ -33,12 +34,8 @@ public class Main3 {
 	// ...........................SETTINGS...........................//
 
 	// ...........................VARS...........................//
-	public static boolean v1, v2 = false;
-	public static long t1, t2 = 0;
-	public static boolean used = false;
-	public static int count = 1;
+	public static int status = ok;
 	private static int towerCount = 0;
-	private static int status = ok;
 	// ...........................VARS...........................//
 	/**
 	 * @param args
@@ -82,6 +79,8 @@ public class Main3 {
 				if(values[1] > schwarz){
 					status = ok;
 				}
+			}else if(status == tower){
+				ballUmWerfen();
 			}
 		}
 	}
@@ -111,12 +110,13 @@ public class Main3 {
 	}
 
 	private static void ballUmWerfen() {
-		if (towerCount == 0) {
-
-		} else if (towerCount == 1) {
-
-		} else if (towerCount == 2) {
-
+		int oldSpeedRight = motorRight.getSpeed();
+		int oldSpeedLeft = motorLeft.getSpeed();
+		motorRight.stop();
+		motorLeft.stop();
+		motorSpezialForward();
+		if (towerCount  % 2 == 0) {
+			
 		} else {
 
 		}
@@ -131,84 +131,5 @@ public class Main3 {
 		motorSpezial.setSpeed(50);
 		motorSpezial.rotateTo(85);
 		motorSpezial.stop();
-	}
-}
-
-class Seeker extends Thread{
-	
-	public LightSensor light;
-	public int minZeit = 700;
-	public int maxZeit = 1000;
-	
-//	public boolean v1, v2, v3, v4, v5, v6, v7 = false;
-//	public long t1, t2, t3, t4, t5, t6, t7 = 0;
-	
-	LinkedList<Boolean> bools = new LinkedList<Boolean>();
-	LinkedList<Long> times = new LinkedList<Long>();
-	public boolean used = false;
-	public int count = 1; 
-	
-	public Seeker(LightSensor spezial){
-		super();
-		this.setDaemon(true);
-		light = spezial;
-		this.start();
-	}
-	
-	public void run(){
-		while(true){
-			if(light.getLightValue() > 50){
-				update(false, System.currentTimeMillis());
-			}else{
-				update(true, System.currentTimeMillis());
-			}
-//			if(!used && (!v1 && v2) && t1 - t2 < zeit){
-//				count++;
-//				if(count % 3 ==0){
-//					Sound.twoBeeps();
-//				}
-//				used = true;
-//			}
-			
-			if( bools.size() > 6
-					&& bools.get(0) && !bools.get(1) && bools.get(2) && !bools.get(3) && bools.get(4) && !bools.get(5) && bools.get(6) 
-					&& (times.get(0) - times.get(6) > minZeit)){
-				Sound.twoBeeps();
-				used = true;
-			}
-			System.out.println(bools.size());
-		}
-	}
-	
-//	private void save(boolean neu, long time){
-//		if(v2 != neu){
-//			v1 = v2;
-//			v2 = neu;
-//			t1 = t2;
-//			t2 = time;
-//			used = false;
-//		}
-//	}
-	
-	private void update(boolean neu, long time){
-		if(bools.isEmpty() || bools.get(0) != neu){
-			bools.add(0, neu);
-			times.add(0, time);
-			for (int i = bools.size()-1; i >=0; i--) {
-				if(times.get(i) < time - maxZeit){
-					times.remove(i);
-					bools.remove(i);
-				}
-			}
-			used = false;
-		}else{
-			times.set(0, time);
-			for (int i = bools.size()-1; i >=0; i--) {
-				if(times.get(i) < time - maxZeit){
-					times.remove(i);
-					bools.remove(i);
-				}
-			}
-		}
 	}
 }
