@@ -1,11 +1,10 @@
-import java.util.LinkedList;
-
 import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
+import lejos.nxt.TouchSensor;
 import lejos.util.Delay;
 
 
@@ -18,13 +17,14 @@ public class Main3 {
 
 	// ...........................SETTINGS...........................//
 	private static final int schwarz = 50;
-	private static int maxSpeed = 400;
-	private static int backSpeed = maxSpeed/4;
+	private static final int maxSpeed = 400;
+	private static final int backSpeed = maxSpeed/4;
+	private static final int deg90 = 207;
 
 	private static final NXTRegulatedMotor motorRight = Motor.C;
 	private static final NXTRegulatedMotor motorLeft = Motor.A;
-	private static final NXTRegulatedMotor motorSpezial = Motor.B; // Noch nicht
-																	// vorhanden
+	private static final NXTRegulatedMotor motorSpezial = Motor.B;
+	private static final TouchSensor debug = new TouchSensor(SensorPort.S2);
 
 	private static final LightSensor lightRight = new LightSensor(SensorPort.S1);
 	private static final LightSensor lightLeft = new LightSensor(SensorPort.S4);
@@ -42,7 +42,6 @@ public class Main3 {
 	 */
 	public static void main(String[] args) {
 		initLightSensors();
-		initMotors();
 		//motorSpezialForward();
 		motorSpezialBack();
 		motorRight.setSpeed(maxSpeed);
@@ -86,14 +85,14 @@ public class Main3 {
 	}
 
 	private static void initLightSensors() {
-		System.out.println("5s fuer Schwarz!");
-		Delay.msDelay(8000);
+		System.out.println("Press debug for black!");
+		waitForTouch(debug);
 		lightLeft.calibrateLow();
 		lightRight.calibrateLow();
 		lightCenter.calibrateLow();
 		Sound.beep();
-		System.out.println("5s fuer Weiss!");
-		Delay.msDelay(3000);
+		waitForTouch(debug);
+		System.out.println("Press debug for white!");
 		lightLeft.calibrateHigh();
 		lightRight.calibrateHigh();
 		lightCenter.calibrateHigh();
@@ -106,20 +105,21 @@ public class Main3 {
 
 	}
 
-	private static void initMotors() {
-	}
-
 	private static void ballUmWerfen() {
-		int oldSpeedRight = motorRight.getSpeed();
-		int oldSpeedLeft = motorLeft.getSpeed();
 		motorRight.stop();
 		motorLeft.stop();
+		motorRight.setSpeed(maxSpeed);
+		motorLeft.setSpeed(maxSpeed);
+		int val = deg90;
+		turn(maxSpeed, val);
 		motorSpezialForward();
-		if (towerCount  % 2 == 0) {
-			
-		} else {
-
-		}
+		forward(maxSpeed, 270);
+		waitForTouch(debug);
+		forward(maxSpeed, -270);
+		turn(maxSpeed, -val);
+		motorSpezialBack();
+		val*=(-1);
+		status = Main3.ok;
 	}
 	
 	private static void motorSpezialBack() {
@@ -131,5 +131,23 @@ public class Main3 {
 		motorSpezial.setSpeed(50);
 		motorSpezial.rotateTo(85);
 		motorSpezial.stop();
+	}
+	
+	public static void turn(int speed, int angle){
+		motorRight.setSpeed(speed);
+		motorLeft.setSpeed(speed);
+		motorRight.rotate(angle,true);
+		motorLeft.rotate(-angle);
+	}
+	public static void forward(int speed, int distance){
+		motorRight.setSpeed(speed);
+		motorLeft.setSpeed(speed);
+		motorRight.rotate(distance,true);
+		motorLeft.rotate(distance);
+	}
+	
+	public static void waitForTouch(TouchSensor sens){
+		while(!sens.isPressed()){};
+		while(sens.isPressed()){};
 	}
 }

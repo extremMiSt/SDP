@@ -55,7 +55,7 @@ class Seeker extends Thread {
 		}
 	}
 	
-	public boolean test(){
+	public synchronized boolean test(){
 		if(bools.size() >= 6){
 			if(times.get(0)- times.get(5) > minZeit && times.get(0)- times.get(5) < maxZeit){
 				if(!bools.get(5) && bools.get(4) &&  !bools.get(3) &&  bools.get(2) &&  !bools.get(1) &&  bools.get(0)){
