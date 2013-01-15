@@ -21,12 +21,17 @@ class Seeker extends Thread {
 		this.start();
 	}
 
+	/**
+	 * false = unterbrechung, true = auf der linie
+	 */
 	public void run() {
 		while (true) {
 			if (light.getLightValue() > 50) {
 				update(false, System.currentTimeMillis());
+				Main3.slow = true;
 			} else {
 				update(true, System.currentTimeMillis());
+				Main3.slow = false;
 			}
 
 			if (test()) {

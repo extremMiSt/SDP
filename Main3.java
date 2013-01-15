@@ -35,7 +35,9 @@ public class Main3 {
 
 	// ...........................VARS...........................//
 	public static int status = ok;
+	public static boolean slow = false;
 	private static int towerCount = 0;
+	private static int val = deg90;
 	// ...........................VARS...........................//
 	/**
 	 * @param args
@@ -44,17 +46,17 @@ public class Main3 {
 		initLightSensors();
 		//motorSpezialForward();
 		motorSpezialBack();
-		motorRight.setSpeed(maxSpeed);
-		motorLeft.setSpeed(maxSpeed);
+		motorRight.setSpeed(getMaxSpeed());
+		motorLeft.setSpeed(getMaxSpeed());
 		motorRight.forward();
 		motorLeft.forward();
 		seeker = new Seeker(lightCenter);
 		while (Button.readButtons() == 0) {
 			int[] values = getLightValues();
 			if(status == ok){
-				motorRight.setSpeed(maxSpeed);
+				motorRight.setSpeed(getMaxSpeed());
 				motorRight.forward();
-				motorLeft.setSpeed(maxSpeed);
+				motorLeft.setSpeed(getMaxSpeed());
 				motorLeft.forward();
 				if(values[0] < schwarz){
 					status = leftOnLine;
@@ -63,17 +65,17 @@ public class Main3 {
 					status = rightOnLine;
 				}
 			}else if(status == leftOnLine){
-				motorLeft.setSpeed(backSpeed);
+				motorLeft.setSpeed(getBackSpeed());
 				motorLeft.backward();
-				motorRight.setSpeed(maxSpeed);
+				motorRight.setSpeed(getMaxSpeed());
 				motorRight.forward();
 				if(values[0] > schwarz){
 					status = ok;
 				}
 			}else if(status == rightOnLine){
-				motorRight.setSpeed(backSpeed);
+				motorRight.setSpeed(getMaxSpeed());
 				motorRight.backward();
-				motorLeft.setSpeed(maxSpeed);
+				motorLeft.setSpeed(getMaxSpeed());
 				motorLeft.forward();
 				if(values[1] > schwarz){
 					status = ok;
@@ -82,6 +84,20 @@ public class Main3 {
 				ballUmWerfen();
 			}
 		}
+	}
+	
+	private static int getMaxSpeed(){
+		if(slow){
+			return maxSpeed/4;
+		}
+		return maxSpeed;
+	}
+	
+	private static int getBackSpeed(){
+		if(slow){
+			return backSpeed/4;
+		}
+		return backSpeed;
 	}
 
 	private static void initLightSensors() {
@@ -108,14 +124,14 @@ public class Main3 {
 	private static void ballUmWerfen() {
 		motorRight.stop();
 		motorLeft.stop();
-		int val = deg90;
-		turn(maxSpeed, val);
+//		int val = deg90;
+		turn(getMaxSpeed(), val);
 		ausrichten();
 		motorSpezialForward();
-		forward(maxSpeed, 310);
+		forward(getMaxSpeed(), 310);
 		waitForTouch(debug);
-		forward(maxSpeed, -310);
-		turn(maxSpeed, -val);
+		forward(getMaxSpeed(), -310);
+		turn(getMaxSpeed(), -val);
 		motorSpezialBack();
 		val*=(-1);
 		status = Main3.ok;
