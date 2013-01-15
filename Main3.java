@@ -108,18 +108,33 @@ public class Main3 {
 	private static void ballUmWerfen() {
 		motorRight.stop();
 		motorLeft.stop();
-		motorRight.setSpeed(maxSpeed);
-		motorLeft.setSpeed(maxSpeed);
 		int val = deg90;
 		turn(maxSpeed, val);
+		ausrichten();
 		motorSpezialForward();
-		forward(maxSpeed, 270);
+		forward(maxSpeed, 310);
 		waitForTouch(debug);
-		forward(maxSpeed, -270);
+		forward(maxSpeed, -310);
 		turn(maxSpeed, -val);
 		motorSpezialBack();
 		val*=(-1);
 		status = Main3.ok;
+	}
+	
+	private static void ausrichten(){
+		forward(maxSpeed,30);
+		motorRight.setSpeed(maxSpeed/8);
+		motorLeft.setSpeed(maxSpeed/8);
+		motorLeft.backward();
+		motorRight.backward();
+		while(motorLeft.isMoving() && motorRight.isMoving()){
+			if(lightRight.getLightValue() < schwarz){
+				motorLeft.stop();
+			}
+			if(lightLeft.getLightValue() < schwarz){
+				motorRight.stop();
+			}
+		}
 	}
 	
 	private static void motorSpezialBack() {
@@ -129,7 +144,7 @@ public class Main3 {
 	
 	public static void motorSpezialForward() {
 		motorSpezial.setSpeed(50);
-		motorSpezial.rotateTo(85);
+		motorSpezial.rotateTo(75);
 		motorSpezial.stop();
 	}
 	
