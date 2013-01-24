@@ -41,15 +41,15 @@ public class Main4 implements Runnable{
 	private int status = ok;
 	private int towerCount = 0;
 	private int val = deg90;
-	private Seeker2 seeker;
+	//private Seeker2 seeker;
 	
 	public Main4(){
 		initLightSensors();
 		motorSpezialBack();
 		motorRight.setSpeed(getMaxSpeed());
 		motorLeft.setSpeed(getMaxSpeed());
-		seeker = new Seeker2(lightCenter, this);
-		seeker.start();
+		//seeker = new Seeker2(lightCenter, this);
+		//seeker.start();
 	}
 
 	@Override
@@ -58,6 +58,9 @@ public class Main4 implements Runnable{
 		motorLeft.forward();
 		while (Button.readButtons() == 0) {
 			int[] values = getLightValues();
+			if(values[2] > schwarz){
+				erkenneUnterbrechungen();
+			}
 			if(status == ok){
 				motorRight.setSpeed(getMaxSpeed());
 				motorRight.forward();
@@ -90,6 +93,41 @@ public class Main4 implements Runnable{
 			}
 		}
 	}
+	private void erkenneUnterbrechungen() {
+		int forward = 1;
+		int winkel = 30;
+		boolean found = false;
+		forward(maxSpeed, winkel);
+		int val = lightCenter.getLightValue();
+		if(val < schwarz){ //schwarz
+			forward = 2;
+			forward(maxSpeed, winkel);
+			val = lightCenter.getLightValue();
+			if(val > schwarz){ //weis
+				forward = 3;
+				forward(maxSpeed, winkel);
+				val = lightCenter.getLightValue();
+				if(val < schwarz){ //schwarz
+					forward = 4;
+					forward(maxSpeed, winkel);
+					val = lightCenter.getLightValue();
+					if(val > schwarz){ //weis
+						forward = 5;
+						forward(maxSpeed, winkel);
+						val = lightCenter.getLightValue();
+						if(val < schwarz){ //schwarz
+							found = true;
+						}
+					}
+				}
+			}
+		}
+		forward(maxSpeed, -1 * forward * 30);
+		if(found){
+			ballUmWerfen();
+		}
+	}
+
 	private int getMaxSpeed(){
 		return maxSpeed;
 	}
@@ -114,7 +152,7 @@ public class Main4 implements Runnable{
 	}
 
 	private int[] getLightValues() {
-		int[] i = {lightRight.getLightValue(), lightLeft.getLightValue()};
+		int[] i = {lightRight.getLightValue(), lightLeft.getLightValue(), lightCenter.getLightValue()};
 		return i;
 
 	}
