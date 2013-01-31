@@ -87,16 +87,16 @@ public class Main3 {
 	}
 	
 	private static int getMaxSpeed(){
-		if(slow){
-			return maxSpeed/4;
-		}
+//		if(slow){
+//			return maxSpeed/4;
+//		}
 		return maxSpeed;
 	}
 	
 	private static int getBackSpeed(){
-		if(slow){
-			return backSpeed/4;
-		}
+//		if(slow){
+//			return backSpeed/4;
+//		}
 		return backSpeed;
 	}
 
@@ -128,19 +128,24 @@ public class Main3 {
 		turn(getMaxSpeed(), val);
 		ausrichten();
 		motorSpezialForward();
-		forward(getMaxSpeed(), 310);
+		forward(getMaxSpeed(), 370);
 		waitForTouch(debug);
-		forward(getMaxSpeed(), -310);
+		forward(getMaxSpeed(), -340);
 		turn(getMaxSpeed(), -val);
 		motorSpezialBack();
 		val*=(-1);
 		status = Main3.ok;
 	}
 	
-	private static void ausrichten(){
+	/*
+	 * [0] -> diffLeft [1] -> diffRight
+	 */
+	private static int[] ausrichten(){
 		forward(maxSpeed,30);
 		motorRight.setSpeed(maxSpeed/8);
 		motorLeft.setSpeed(maxSpeed/8);
+		int posLeft = motorLeft.getPosition();
+		int posRight = motorRight.getPosition();
 		motorLeft.backward();
 		motorRight.backward();
 		while(motorLeft.isMoving() && motorRight.isMoving()){
@@ -151,6 +156,11 @@ public class Main3 {
 				motorRight.stop();
 			}
 		}
+		int diffLeft = motorLeft.getPosition() - posLeft;
+		int diffRight = motorLeft.getPosition() - posRight;
+		int diff[] = {diffLeft, diffRight};
+		
+		return diff;
 	}
 	
 	private static void motorSpezialBack() {
@@ -160,8 +170,8 @@ public class Main3 {
 	
 	public static void motorSpezialForward() {
 		motorSpezial.setSpeed(50);
-		motorSpezial.rotateTo(75);
-		motorSpezial.stop();
+		motorSpezial.rotateTo(70);
+		motorSpezial.stop();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 	}
 	
 	public static void turn(int speed, int angle){
