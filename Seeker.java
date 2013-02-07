@@ -5,22 +5,35 @@ import lejos.nxt.LightSensor;
 class Seeker extends Thread {
 
 	public LightSensor light;
-	public int minZeit = 700;
-	public int maxZeit = 1000;
-	public int tinyMaxZeit = 450;
-	public int tinyMinZeit = 20;
+	public int minZeit = 1330;
+	public int maxZeit = 1720;
+	public int tinyMaxZeit = 340;
+	public int tinyMinZeit = 130;
+	private int[] time; // [0]minZeit, [1]maxZeit, [2]tinyMax, [3] tinyMin
 	
 	LinkedList<Boolean> bools = new LinkedList<Boolean>();
 	LinkedList<Long> times = new LinkedList<Long>();
 	public boolean used = false;
+	
 
 	public Seeker(LightSensor spezial) {
 		super();
 		this.setDaemon(true);
 		light = spezial;
+		time = times();
 		this.start();
 	}
-
+	
+	public int[] times() {
+		int speed = Main3.maxSpeed;
+		int[] fuick = new int[4];
+		fuick[0] = (minZeit*100)/speed;
+		fuick[1] = (maxZeit*100)/speed;
+		fuick[2] = (tinyMaxZeit*100)/speed;
+		fuick[3] = (tinyMinZeit*100)/speed;
+		return fuick;		
+	}
+	
 	/**
 	 * false = unterbrechung, true = auf der linie
 	 */
@@ -62,10 +75,10 @@ class Seeker extends Thread {
 	
 	public synchronized boolean test(){
 		if(bools.size() >= 6){
-			if(times.get(0)- times.get(5) > minZeit && times.get(0)- times.get(5) < maxZeit){
+			if(times.get(0)- times.get(5) > time[0] && times.get(0)- times.get(5) < time[1]){
 				if(!bools.get(5) && bools.get(4) &&  !bools.get(3) &&  bools.get(2) &&  !bools.get(1) &&  bools.get(0)){
 					for (int i = 1; i < 6; i++) {
-						if(times.get(i-1) - times.get(i) < tinyMaxZeit && times.get(i-1) - times.get(i) > tinyMinZeit){
+						if(times.get(i-1) - times.get(i) < time[2] && times.get(i-1) - times.get(i) > time[3]){
 							continue;
 						}else{
 							return false;

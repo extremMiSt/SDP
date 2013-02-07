@@ -17,9 +17,10 @@ public class Main3 {
 
 	// ...........................SETTINGS...........................//
 	private static final int schwarz = 50;
-	private static final int maxSpeed = 400;
+	public static final int maxSpeed = 100;
 	private static final int backSpeed = maxSpeed/4;
 	private static final int deg90 = 207;
+	private static final int schraeg = 0;
 
 	private static final NXTRegulatedMotor motorRight = Motor.C;
 	private static final NXTRegulatedMotor motorLeft = Motor.A;
@@ -44,8 +45,11 @@ public class Main3 {
 	 */
 	public static void main(String[] args) {
 		initLightSensors();
-		//motorSpezialForward();
-		motorSpezialBack();
+		if(towerCount == schraeg){
+			motorSpezialForward();
+		}else{
+			motorSpezialBack();
+		}
 		motorRight.setSpeed(getMaxSpeed());
 		motorLeft.setSpeed(getMaxSpeed());
 		motorRight.forward();
@@ -126,17 +130,40 @@ public class Main3 {
 		motorLeft.stop();
 //		int val = deg90;
 		turn(getMaxSpeed(), val);
-		ausrichten();
+		int diff[] = ausrichten();
 		motorSpezialForward();
 		forward(getMaxSpeed(), 370);
 		waitForTouch(debug);
 		forward(getMaxSpeed(), -340);
 		turn(getMaxSpeed(), -val);
-		motorSpezialBack();
+		towerCount++;
+		if(!(towerCount == schraeg)){
+			motorSpezialBack();
+		}
 		val*=(-1);
 		status = Main3.ok;
 	}
 	
+//	private static void turnBack(int i) {
+//		motorLeft.backward();
+//		motorRight.backward();
+//		while(motorLeft.isMoving() && motorRight.isMoving()){ //Jetzt beide auf der linie;
+//			if(lightRight.getLightValue() < schwarz){
+//				motorLeft.stop();
+//			}
+//			if(lightLeft.getLightValue() < schwarz){
+//				motorRight.stop();
+//			}
+//		}
+//		LightSensor sens = (i < 0)?lightRight:lightLeft;
+//		NXTRegulatedMotor motor = (i > 0)?motorRight:motorLeft;
+//		
+//		motor.backward();
+//		while(sens.getLightValue() < schwarz){}
+//		motor.stop();
+//		
+//	}
+
 	/*
 	 * [0] -> diffLeft [1] -> diffRight
 	 */
