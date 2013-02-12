@@ -5,10 +5,8 @@ import lejos.nxt.LightSensor;
 class Seeker extends Thread {
 
 	public LightSensor light;
-	public int minZeit = 1330;
-	public int maxZeit = 1720;
-	public int tinyMaxZeit = 340;
-	public int tinyMinZeit = 130;
+	public int zeit = 1500;
+	public int r = 300;
 	private int[] time; // [0]minZeit, [1]maxZeit, [2]tinyMax, [3] tinyMin
 	
 	LinkedList<Boolean> bools = new LinkedList<Boolean>();
@@ -27,10 +25,10 @@ class Seeker extends Thread {
 	public int[] times() {
 		int speed = Main3.maxSpeed;
 		int[] fuick = new int[4];
-		fuick[0] = (minZeit*100)/speed;
-		fuick[1] = (maxZeit*100)/speed;
-		fuick[2] = (tinyMaxZeit*100)/speed;
-		fuick[3] = (tinyMinZeit*100)/speed;
+		fuick[0] = ((zeit - r)*100)/speed;
+		fuick[1] = ((zeit + r)*100)/speed;
+		fuick[2] = ((zeit + r)/5*100)/speed;
+		fuick[3] = ((zeit - r)/5*100)/speed;
 		return fuick;		
 	}
 	
@@ -64,7 +62,7 @@ class Seeker extends Thread {
 			times.set(0, time);
 		}
 		for (int i = bools.size() - 1; i >= 0; i--) {
-			if (times.get(i) < time - maxZeit) {
+			if (times.get(i) < time - this.time[1]) {
 				times.remove(i);
 				bools.remove(i);
 			}else {
@@ -86,6 +84,7 @@ class Seeker extends Thread {
 					}
 					return true;
 				}
+			}else{
 			}
 		}
 		return false;
