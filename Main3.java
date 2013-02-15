@@ -17,10 +17,10 @@ public class Main3 {
 
 	// ...........................SETTINGS...........................//
 	private static final int schwarz = 50;
-	public static final int maxSpeed = 100;
+	public static final int maxSpeed = 400;
 	private static final int backSpeed = maxSpeed/4;
 	private static final int deg90 = 207;
-	private static final int schraeg = 0;
+	private static final int schraeg = 1;
 
 	private static final NXTRegulatedMotor motorRight = Motor.C;
 	private static final NXTRegulatedMotor motorLeft = Motor.A;
@@ -46,7 +46,7 @@ public class Main3 {
 	public static void main(String[] args) {
 		initLightSensors();
 		if(towerCount == schraeg){
-			motorSpezialForward();
+			motorSpezialForward(25);
 		}else{
 			motorSpezialBack();
 		}
@@ -131,14 +131,16 @@ public class Main3 {
 //		int val = deg90;
 		turn(getMaxSpeed(), val);
 		int diff[] = ausrichten();
-		motorSpezialForward();
+		motorSpezialForward(0);
 		forward(getMaxSpeed(), 370);
-		waitForTouch(debug);
+		//waitForTouch(debug);
 		forward(getMaxSpeed(), -340);
 		turn(getMaxSpeed(), -val);
 		towerCount++;
 		if(!(towerCount == schraeg)){
 			motorSpezialBack();
+		} else {
+			motorSpezialForward(25);			
 		}
 		val*=(-1);
 		status = Main3.ok;
@@ -195,9 +197,9 @@ public class Main3 {
 		motorSpezial.stop();
 	}
 	
-	public static void motorSpezialForward() {
+	public static void motorSpezialForward(int i) {
 		motorSpezial.setSpeed(50);
-		motorSpezial.rotateTo(70);
+		motorSpezial.rotateTo(70 + i);
 		motorSpezial.stop();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 	}
 	

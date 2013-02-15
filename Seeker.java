@@ -39,15 +39,17 @@ class Seeker extends Thread {
 		while (true) {
 			if (light.getLightValue() > 50) {
 				update(false, System.currentTimeMillis());
-				Main3.slow = true;
+			    //System.out.print("0");
 			} else {
 				update(true, System.currentTimeMillis());
-				Main3.slow = false;
+			    //System.out.print("1");
 			}
 
 			if (test()) {
 				used = true;
 				Main3.status = Main3.tower;
+				bools = new LinkedList<Boolean>();
+				times = new LinkedList<Long>();
 			}
 			//while(new TouchSensor(SensorPort.S2).isPressed()){}
 		}
@@ -75,13 +77,13 @@ class Seeker extends Thread {
 		if(bools.size() >= 6){
 			if(times.get(0)- times.get(5) > time[0] && times.get(0)- times.get(5) < time[1]){
 				if(!bools.get(5) && bools.get(4) &&  !bools.get(3) &&  bools.get(2) &&  !bools.get(1) &&  bools.get(0)){
-					for (int i = 1; i < 6; i++) {
-						if(times.get(i-1) - times.get(i) < time[2] && times.get(i-1) - times.get(i) > time[3]){
-							continue;
-						}else{
-							return false;
-						}
-					}
+					//for (int i = 1; i < 6; i++) {
+						//if(times.get(i-1) - times.get(i) < time[2] && times.get(i-1) - times.get(i) > time[3]){
+						//	continue;
+						//}else{
+						//	return false;
+						//}
+					//}
 					return true;
 				}
 			}else{
